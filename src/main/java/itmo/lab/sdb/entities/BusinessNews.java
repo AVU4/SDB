@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 public class BusinessNews {
     private String title;
-    private int score;
+    private String score;
     private String link;
     private String summary;
     private String published;
