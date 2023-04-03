@@ -1,4 +1,4 @@
-drop table BUSINESS_NEWS;
+drop table if exists BUSINESS_NEWS;
 create table BUSINESS_NEWS
 (
   TITLE TEXT,
