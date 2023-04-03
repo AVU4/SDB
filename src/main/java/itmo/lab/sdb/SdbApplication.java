@@ -21,6 +21,9 @@ public class SdbApplication {
 	@Autowired
 	private Job readBusinessNewsFromFileJob;
 
+	@Autowired
+	private Job saveDataFromMySQLToPostgresJob;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SdbApplication.class, args);
 	}
@@ -28,6 +31,7 @@ public class SdbApplication {
 	@Scheduled(cron = "0 */1 * * * ?")
 	public void perform() throws Exception {
 		jobLauncher.run(readBusinessNewsFromFileJob, new JobParameters());
+		jobLauncher.run(saveDataFromMySQLToPostgresJob, new JobParameters());
 	}
 
 }

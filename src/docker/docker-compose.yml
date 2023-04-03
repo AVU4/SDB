@@ -8,12 +8,14 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: news
 
-#  postgres_db:
-#    image: postgres:13.3
-#    ports:
-#      - "5432:5432"
-#    environment:
-#      POSTGRES_PASSWORD: 'password'
+  postgres_db:
+    image: postgres:13.3
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: result
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
 #  db:
 #    image: mongo:4.0.4
 #    ports:
@@ -25,4 +27,4 @@ services:
     depends_on:
 #      - db
       - db_1
-#      - postgres_db
+      - postgres_db
