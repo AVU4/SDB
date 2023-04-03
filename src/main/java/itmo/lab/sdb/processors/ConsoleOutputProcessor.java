@@ -1,6 +1,6 @@
 package itmo.lab.sdb.processors;
 
-import itmo.lab.sdb.entities.BusinessNews;
+import itmo.lab.sdb.mysql.BusinessNews;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 

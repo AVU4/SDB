@@ -1,6 +1,5 @@
 package itmo.lab.sdb.mysql;
 
-import itmo.lab.sdb.entities.BusinessNews;
 import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 
 import java.sql.PreparedStatement;

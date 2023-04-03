@@ -1,6 +1,5 @@
 package itmo.lab.sdb.mysql;
 
-import itmo.lab.sdb.entities.BusinessNews;
 import itmo.lab.sdb.processors.ConsoleOutputProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -83,6 +82,16 @@ public class MySQLConfiguration {
                 .build();
     }
 
+    @Bean(name = "mySQLDataSource")
+    public DataSource mySQLDataSource() {
+        return DataSourceBuilder.create()
+                .url("jdbc:mysql://db_1:3306/news")
+                .username("root")
+                .password("password")
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .build();
+    }
+
     @Bean
     @Primary
     public DataSource dataSource() {
@@ -92,16 +101,6 @@ public class MySQLConfiguration {
                 .setName(EmbeddedDatabaseType.H2.name())
                 .addScript("classpath:org/springframework/batch/core/schema-drop-h2.sql")
                 .addScript("classpath:org/springframework/batch/core/schema-h2.sql")
-                .build();
-    }
-
-    @Bean(name = "mySQLDataSource")
-    public DataSource mySQLDataSource() {
-        return DataSourceBuilder.create()
-                .url("jdbc:mysql://db_1:3306/news")
-                .username("root")
-                .password("password")
-                .driverClassName("com.mysql.cj.jdbc.Driver")
                 .build();
     }
 

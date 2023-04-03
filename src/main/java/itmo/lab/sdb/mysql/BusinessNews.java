@@ -1,4 +1,4 @@
-package itmo.lab.sdb.entities;
+package itmo.lab.sdb.mysql;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
