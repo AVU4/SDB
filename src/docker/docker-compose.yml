@@ -16,15 +16,17 @@ services:
       POSTGRES_DB: result
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
-#  db:
-#    image: mongo:4.0.4
-#    ports:
-#      - "4536:4536"
+  db:
+    image: mongo:4.0.4
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: moex
   app:
     build:
       context: ../../
       dockerfile: src/docker/Dockerfile
     depends_on:
-#      - db
+      - db
       - db_1
       - postgres_db

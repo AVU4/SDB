@@ -34,7 +34,7 @@ public class MySQLConfiguration {
     @Value("classpath://mySQLScript.sql")
     private Resource mySQLScript;
 
-    @Value("classpath:/data.tsv")
+    @Value("classpath://data.tsv")
     private Resource tsvFile;
 
     @Bean
