@@ -1,5 +1,6 @@
 package itmo.lab.sdb;
 
+import itmo.lab.sdb.events.DatabaseDataImportedEvent;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -7,6 +8,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -35,12 +37,15 @@ public class SdbApplication {
 		SpringApplication.run(SdbApplication.class, args);
 	}
 
-	@Scheduled(cron = "0 */1 * * * ?")
-	public void perform() throws Exception {
-		jobLauncher.run(readBusinessNewsFromFileJob, new JobParameters());
+	@EventListener(DatabaseDataImportedEvent.class)
+	public void performImportData() throws Exception {
 		jobLauncher.run(importIndexDataJob, new JobParameters());
+		jobLauncher.run(readBusinessNewsFromFileJob, new JobParameters());
+	}
+
+	@Scheduled(cron = "0 3/3 * * * ?")
+	public void perform() throws Exception {
 		jobLauncher.run(saveDataFromMySQLToPostgresJob, new JobParameters());
 		jobLauncher.run(saveDataFromMongoToPostgresJob, new JobParameters());
 	}
-
 }
