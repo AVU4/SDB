@@ -1,5 +1,6 @@
-package itmo.lab.sdb.mongo;
+package itmo.lab.sdb.job_configurations;
 
+import itmo.lab.sdb.entities.IndexData;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -19,7 +20,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class MongoConfiguration {
+public class ImportDataToMongoDBConfiguration {
 
     @Value("classpath://index_dataset.csv")
     private Resource indexDataset;

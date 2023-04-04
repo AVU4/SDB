@@ -1,5 +1,6 @@
-package itmo.lab.sdb.postgres;
+package itmo.lab.sdb.setters;
 
+import itmo.lab.sdb.entities.MOEXIndexResult;
 import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 
 import java.sql.PreparedStatement;

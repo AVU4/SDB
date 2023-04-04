@@ -1,7 +1,7 @@
 package itmo.lab.sdb.processors;
 
-import itmo.lab.sdb.mongo.IndexData;
-import itmo.lab.sdb.postgres.MOEXIndexResult;
+import itmo.lab.sdb.entities.IndexData;
+import itmo.lab.sdb.entities.MOEXIndexResult;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 

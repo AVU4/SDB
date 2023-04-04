@@ -1,5 +1,6 @@
-package itmo.lab.sdb.mysql;
+package itmo.lab.sdb.mappers;
 
+import itmo.lab.sdb.entities.BusinessNews;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

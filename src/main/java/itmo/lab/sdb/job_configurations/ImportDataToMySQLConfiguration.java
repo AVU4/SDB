@@ -1,5 +1,7 @@
-package itmo.lab.sdb.mysql;
+package itmo.lab.sdb.job_configurations;
 
+import itmo.lab.sdb.entities.BusinessNews;
+import itmo.lab.sdb.setters.BusinessNewsPreparedStatementSetter;
 import itmo.lab.sdb.processors.ConsoleOutputProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,24 +17,15 @@ import org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolic
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-@Configuration
-public class MySQLConfiguration {
 
-    @Value("classpath://mySQLScript.sql")
-    private Resource mySQLScript;
+@Configuration
+public class ImportDataToMySQLConfiguration {
 
     @Value("classpath://data.tsv")
     private Resource tsvFile;
@@ -58,11 +51,12 @@ public class MySQLConfiguration {
     public Step importBusinessNewsStep(JobRepository jobRepository,
                                        ConsoleOutputProcessor consoleOutputProcessor,
                                        PlatformTransactionManager platformTransactionManager,
-                                       JdbcBatchItemWriter<BusinessNews> writeBusinessNewsToMySQLDB) {
+                                       JdbcBatchItemWriter<BusinessNews> writeBusinessNewsToMySQLDB,
+                                       FlatFileItemReader<BusinessNews> businessNewsReader) {
         return new StepBuilder("importBusinessNewsStep", jobRepository)
                 .<BusinessNews, BusinessNews>chunk(10)
                 .transactionManager(platformTransactionManager)
-                .reader(businessNewsReader())
+                .reader(businessNewsReader)
                 .processor(consoleOutputProcessor)
                 .writer(writeBusinessNewsToMySQLDB)
                 .build();
@@ -82,31 +76,4 @@ public class MySQLConfiguration {
                 .build();
     }
 
-    @Bean(name = "mySQLDataSource")
-    public DataSource mySQLDataSource() {
-        return DataSourceBuilder.create()
-                .url("jdbc:mysql://db_1:3306/news")
-                .username("root")
-                .password("password")
-                .driverClassName("com.mysql.cj.jdbc.Driver")
-                .build();
-    }
-
-    @Bean
-    @Primary
-    public DataSource dataSource() {
-        EmbeddedDatabaseBuilder embeddedDatabaseBuilder  = new EmbeddedDatabaseBuilder();
-        return embeddedDatabaseBuilder
-                .setType(EmbeddedDatabaseType.H2)
-                .setName(EmbeddedDatabaseType.H2.name())
-                .addScript("classpath:org/springframework/batch/core/schema-drop-h2.sql")
-                .addScript("classpath:org/springframework/batch/core/schema-h2.sql")
-                .build();
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    public void performDatabaseScript() {
-        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(mySQLScript);
-        resourceDatabasePopulator.execute(mySQLDataSource());
-    }
 }

@@ -30,6 +30,7 @@ public class SdbApplication {
 	@Autowired
 	private Job saveDataFromMongoToPostgresJob;
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(SdbApplication.class, args);
 	}
