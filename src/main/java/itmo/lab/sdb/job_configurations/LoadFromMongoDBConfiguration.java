@@ -37,13 +37,12 @@ public class LoadFromMongoDBConfiguration {
     public Step saveDataFromMongoToPostgresStep(JobRepository jobRepository,
                                                 PlatformTransactionManager transactionManager,
                                                 MongoItemReader<IndexData> mongoIndexDataReader,
-                                                JdbcBatchItemWriter<MOEXIndexResult> updateMOEXIndexToPostgres,
-                                                MOEXIndexFromIndexDataProcessor indexDataProcessor) {
+                                                JdbcBatchItemWriter<MOEXIndexResult> updateMOEXIndexToPostgres) {
         return new StepBuilder("saveDataFromMongoToPostgresStep", jobRepository)
                 .<IndexData, MOEXIndexResult>chunk(10)
                 .transactionManager(transactionManager)
                 .reader(mongoIndexDataReader)
-                .processor(indexDataProcessor)
+                .processor(new MOEXIndexFromIndexDataProcessor())
                 .writer(updateMOEXIndexToPostgres)
                 .build();
 

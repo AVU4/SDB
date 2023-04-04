@@ -55,13 +55,12 @@ public class LoadDataFromMySQLConfiguration {
     public Step saveDataFromMySQLToPostgresStep(JobRepository jobRepository,
                                                 PlatformTransactionManager transactionManager,
                                                 ItemReader<BusinessNews> mySQLReader,
-                                                MOEXIndexFromBusinessNewsProcessor moexIndexFromBusinessNewsProcessor,
                                                 JdbcBatchItemWriter<MOEXIndexResult> writeMOEXIndexToPostgres) {
         return new StepBuilder("saveDataFromMySQLToPostgresStep", jobRepository)
                 .<BusinessNews, MOEXIndexResult>chunk(10)
                 .transactionManager(transactionManager)
                 .reader(mySQLReader)
-                .processor(moexIndexFromBusinessNewsProcessor)
+                .processor(new MOEXIndexFromBusinessNewsProcessor())
                 .writer(writeMOEXIndexToPostgres)
                 .build();
     }

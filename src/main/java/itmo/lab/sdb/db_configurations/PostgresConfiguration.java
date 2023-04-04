@@ -2,6 +2,7 @@ package itmo.lab.sdb.db_configurations;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,13 +19,9 @@ public class PostgresConfiguration {
     private Resource postgresSQLScript;
 
     @Bean(name = "postgresDataSource")
+    @ConfigurationProperties(prefix = "spring.postgres.datasource")
     public DataSource postgresDataSource() {
-        return DataSourceBuilder.create()
-                .url("jdbc:postgresql://postgres_db:5432/result")
-                .username("root")
-                .password("password")
-                .driverClassName("org.postgresql.Driver")
-                .build();
+        return DataSourceBuilder.create().build();
     }
 
     @EventListener(ApplicationReadyEvent.class)

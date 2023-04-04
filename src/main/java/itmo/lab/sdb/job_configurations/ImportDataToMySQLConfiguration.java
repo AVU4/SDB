@@ -49,7 +49,6 @@ public class ImportDataToMySQLConfiguration {
 
     @Bean
     public Step importBusinessNewsStep(JobRepository jobRepository,
-                                       ConsoleOutputProcessor consoleOutputProcessor,
                                        PlatformTransactionManager platformTransactionManager,
                                        JdbcBatchItemWriter<BusinessNews> writeBusinessNewsToMySQLDB,
                                        FlatFileItemReader<BusinessNews> businessNewsReader) {
@@ -57,7 +56,7 @@ public class ImportDataToMySQLConfiguration {
                 .<BusinessNews, BusinessNews>chunk(10)
                 .transactionManager(platformTransactionManager)
                 .reader(businessNewsReader)
-                .processor(consoleOutputProcessor)
+                .processor(new ConsoleOutputProcessor())
                 .writer(writeBusinessNewsToMySQLDB)
                 .build();
     }

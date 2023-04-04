@@ -3,13 +3,11 @@ package itmo.lab.sdb.processors;
 import itmo.lab.sdb.entities.BusinessNews;
 import itmo.lab.sdb.entities.MOEXIndexResult;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-@Component
 public class MOEXIndexFromBusinessNewsProcessor implements ItemProcessor<BusinessNews, MOEXIndexResult> {
     @Override
     public MOEXIndexResult process(BusinessNews item) throws Exception {

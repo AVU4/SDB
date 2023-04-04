@@ -2,6 +2,7 @@ package itmo.lab.sdb.db_configurations;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,14 +35,11 @@ public class MySQLConfiguration {
 
 
     @Bean(name = "mySQLDataSource")
+    @ConfigurationProperties(prefix = "spring.mysql.datasource")
     public DataSource mySQLDataSource() {
-        return DataSourceBuilder.create()
-                .url("jdbc:mysql://db_1:3306/news")
-                .username("root")
-                .password("password")
-                .driverClassName("com.mysql.cj.jdbc.Driver")
-                .build();
+        return DataSourceBuilder.create().build();
     }
+
     @EventListener(ApplicationReadyEvent.class)
     public void performDatabaseScript() {
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(mySQLScript);
