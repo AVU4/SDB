@@ -27,6 +27,9 @@ public class SdbApplication {
 	@Autowired
 	private Job importIndexDataJob;
 
+	@Autowired
+	private Job saveDataFromMongoToPostgresJob;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SdbApplication.class, args);
 	}
@@ -36,6 +39,7 @@ public class SdbApplication {
 		jobLauncher.run(readBusinessNewsFromFileJob, new JobParameters());
 		jobLauncher.run(importIndexDataJob, new JobParameters());
 		jobLauncher.run(saveDataFromMySQLToPostgresJob, new JobParameters());
+		jobLauncher.run(saveDataFromMongoToPostgresJob, new JobParameters());
 	}
 
 }

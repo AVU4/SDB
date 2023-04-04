@@ -1,14 +1,18 @@
 package itmo.lab.sdb.postgres;
 
+import itmo.lab.sdb.mongo.IndexData;
 import itmo.lab.sdb.mysql.BusinessNews;
 import itmo.lab.sdb.mysql.BusinessNewsMapper;
-import itmo.lab.sdb.processors.MOEXIndexProcessor;
+import itmo.lab.sdb.processors.MOEXIndexFromBusinessNewsProcessor;
+import itmo.lab.sdb.processors.MOEXIndexFromIndexDataProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.data.MongoItemReader;
+import org.springframework.batch.item.data.builder.MongoItemReaderBuilder;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
@@ -20,10 +24,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 
 @Configuration
 public class PostgresConfiguration {
@@ -63,8 +69,18 @@ public class PostgresConfiguration {
     public JdbcBatchItemWriter<MOEXIndexResult> writeMOEXIndexToPostgres(@Qualifier("postgresDataSource") DataSource postgresDataSource) {
         return new JdbcBatchItemWriterBuilder<MOEXIndexResult>()
                 .dataSource(postgresDataSource)
-                .sql("INSERT INTO moex (DATE, TITLE, SUMMARY, INDEX_VALUES) VALUES (?, ?, ?, ?)")
+                .sql("INSERT INTO moex (DATE, TITLE, SUMMARY, INDEX_VALUE) VALUES (?, ?, ?, ?)")
                 .itemPreparedStatementSetter(new MOEXIndexPreparedStatementSetter())
+                .build();
+    }
+
+    @Bean(name = "updateMOEXIndexToPostgres")
+    public JdbcBatchItemWriter<MOEXIndexResult> updateMOEXIndexToPostgres(@Qualifier("postgresDataSource") DataSource postgresDataSource) {
+        return new JdbcBatchItemWriterBuilder<MOEXIndexResult>()
+                .dataSource(postgresDataSource)
+                .sql("UPDATE moex SET INDEX_VALUE=? WHERE DATE=?")
+                .assertUpdates(false)
+                .itemPreparedStatementSetter(new MOEXIndexUpdateStatementSetter())
                 .build();
     }
 
@@ -72,14 +88,50 @@ public class PostgresConfiguration {
     public Step saveDataFromMySQLToPostgresStep(JobRepository jobRepository,
                                                 PlatformTransactionManager transactionManager,
                                                 ItemReader<BusinessNews> mySQLReader,
-                                                MOEXIndexProcessor moexIndexProcessor,
+                                                MOEXIndexFromBusinessNewsProcessor moexIndexFromBusinessNewsProcessor,
                                                 JdbcBatchItemWriter<MOEXIndexResult> writeMOEXIndexToPostgres) {
         return new StepBuilder("saveDataFromMySQLToPostgresStep", jobRepository)
                 .<BusinessNews, MOEXIndexResult>chunk(10)
                 .transactionManager(transactionManager)
                 .reader(mySQLReader)
-                .processor(moexIndexProcessor)
+                .processor(moexIndexFromBusinessNewsProcessor)
                 .writer(writeMOEXIndexToPostgres)
+                .build();
+    }
+
+    @Bean
+    public MongoItemReader<IndexData> mongoIndexDataReader(MongoTemplate mongoTemplate) {
+        return new MongoItemReaderBuilder<IndexData>()
+                .name("mongoIndexDataReader")
+                .collection("index")
+                .template(mongoTemplate)
+                .jsonQuery("db.index.findAll()")
+                .sorts(Collections.emptyMap())
+                .targetType(IndexData.class)
+                .build();
+    }
+
+    @Bean
+    public Step saveDataFromMongoToPostgresStep(JobRepository jobRepository,
+                                                PlatformTransactionManager transactionManager,
+                                                MongoItemReader<IndexData> mongoIndexDataReader,
+                                                @Qualifier("updateMOEXIndexToPostgres") JdbcBatchItemWriter<MOEXIndexResult> updateMOEXIndexToPostgres,
+                                                MOEXIndexFromIndexDataProcessor indexDataProcessor) {
+        return new StepBuilder("saveDataFromMongoToPostgresStep", jobRepository)
+                .<IndexData, MOEXIndexResult>chunk(10)
+                .transactionManager(transactionManager)
+                .reader(mongoIndexDataReader)
+                .processor(indexDataProcessor)
+                .writer(updateMOEXIndexToPostgres)
+                .build();
+
+    }
+
+    @Bean
+    public Job saveDataFromMongoToPostgresJob(JobRepository jobRepository,
+                                              Step saveDataFromMongoToPostgresStep) {
+        return new JobBuilder("saveDataFromMongoToPostgresJob", jobRepository)
+                .start(saveDataFromMongoToPostgresStep)
                 .build();
     }
 

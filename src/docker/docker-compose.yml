@@ -26,6 +26,7 @@ services:
     build:
       context: ../../
       dockerfile: src/docker/Dockerfile
+    restart: on-failure
     depends_on:
       - db
       - db_1

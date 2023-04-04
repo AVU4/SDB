@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -15,5 +13,5 @@ public class MOEXIndexResult {
     private Long dayId;
     private String title;
     private String summary;
-    private List<Double> indexValues;
+    private double indexValue;
 }

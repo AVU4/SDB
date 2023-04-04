@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Component
-public class MOEXIndexProcessor implements ItemProcessor<BusinessNews, MOEXIndexResult> {
+public class MOEXIndexFromBusinessNewsProcessor implements ItemProcessor<BusinessNews, MOEXIndexResult> {
     @Override
     public MOEXIndexResult process(BusinessNews item) throws Exception {
         MOEXIndexResult moexIndexResult = new MOEXIndexResult();
@@ -22,7 +22,7 @@ public class MOEXIndexProcessor implements ItemProcessor<BusinessNews, MOEXIndex
         } catch (DateTimeParseException e) {
             return null;
         }
-        moexIndexResult.setDayId(zonedDateTime.toEpochSecond());
+        moexIndexResult.setDayId(zonedDateTime.toLocalDate().toEpochDay());
         return moexIndexResult;
     }
 }
