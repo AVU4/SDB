@@ -32,6 +32,9 @@ public class SdbApplication {
 	@Autowired
 	private Job saveDataFromMongoToPostgresJob;
 
+	@Autowired
+	private Job saveDataToCSVJob;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(SdbApplication.class, args);
@@ -47,5 +50,6 @@ public class SdbApplication {
 	public void perform() throws Exception {
 		jobLauncher.run(saveDataFromMySQLToPostgresJob, new JobParameters());
 		jobLauncher.run(saveDataFromMongoToPostgresJob, new JobParameters());
+		jobLauncher.run(saveDataToCSVJob, new JobParameters());
 	}
 }

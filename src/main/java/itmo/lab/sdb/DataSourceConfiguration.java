@@ -27,6 +27,9 @@ public class DataSourceConfiguration {
     @Value("classpath://postgresSQLScript.sql")
     private Resource postgresSQLScript;
 
+    @Value("classpath://clickHouseScript.sql")
+    private Resource clickHouseScript;
+
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 

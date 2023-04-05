@@ -27,6 +27,8 @@ services:
       context: ../../
       dockerfile: src/docker/Dockerfile
     restart: on-failure
+    volumes:
+      - /home/avu/IdeaProjects/sdb/output:/home/result
     depends_on:
       - db
       - db_1
