@@ -20,7 +20,7 @@ public class MOEXIndexFromBusinessNewsProcessor implements ItemProcessor<Busines
         } catch (DateTimeParseException e) {
             return null;
         }
-        moexIndexResult.setDayId(zonedDateTime.toLocalDate().toEpochDay());
+        moexIndexResult.setDate(zonedDateTime.toLocalDate());
         return moexIndexResult;
     }
 }

@@ -10,7 +10,7 @@ public class MOEXIndexResultMapper implements RowMapper<MOEXIndexResult> {
     @Override
     public MOEXIndexResult mapRow(ResultSet rs, int rowNum) throws SQLException {
         MOEXIndexResult moexIndexResult = new MOEXIndexResult();
-        moexIndexResult.setDayId(rs.getLong("date"));
+        moexIndexResult.setDate(rs.getDate("date").toLocalDate());
         moexIndexResult.setTitle(rs.getString("title"));
         String summary = rs.getString("summary").replace("\n", " ");
         moexIndexResult.setSummary(summary);

@@ -11,8 +11,7 @@ public class MOEXIndexFromIndexDataProcessor implements ItemProcessor<IndexData,
     public MOEXIndexResult process(IndexData item) throws Exception {
         MOEXIndexResult indexResult = new MOEXIndexResult();
         indexResult.setIndexValue(Double.parseDouble(item.getClose().replace(",", ".")));
-        LocalDate date = LocalDate.parse(item.getTradeDate());
-        indexResult.setDayId(date.toEpochDay());
+        indexResult.setDate(LocalDate.parse(item.getTradeDate()));
 
         return indexResult;
     }

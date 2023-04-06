@@ -1,0 +1,18 @@
+version: '3'
+services:
+  clickhouse:
+    image: yandex/clickhouse-server
+    volumes:
+      - /home/avu/IdeaProjects/sdb/output/result_data.tsv:/var/lib/clickhouse/result_data.tsv
+  grafana:
+    image: qxip/clickhouse-grafana
+    ports:
+      - 3000:3000
+    environment:
+      GF_INSTALL_PLUGINS: "vertamedia-clickhouse-datasource"
+      GF_SECURITY_ADMIN_USER: "root"
+      GF_SECURITY_ADMIN_PASSWORD: "password"
+  grafana-storage:
+    image: busybox:latest
+    volumes:
+      - /var/lib/grafana

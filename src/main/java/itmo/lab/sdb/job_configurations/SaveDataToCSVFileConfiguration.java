@@ -48,7 +48,7 @@ public class SaveDataToCSVFileConfiguration {
                 .append(false)
                 .delimited()
                 .delimiter("\t")
-                .names("dayId" , "title" ,"summary", "indexValue")
+                .names("date" , "title" ,"summary", "indexValue")
                 .shouldDeleteIfExists(true)
                 .build();
 
